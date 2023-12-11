@@ -68,14 +68,27 @@ app.get('/product/category', async (req, res) => {
 app.get('/product/subcategory', async (req, res) => {
     const { category, subCategory } = req.query;
     console.log(category, subCategory);
-    const product = await prodectModel.find({
-        $and: [
-            { subCategory },
-            { category }
-        ]
-    })
 
-    res.send(product)
+    if(subCategory=="All product"){
+     const product = await prodectModel.find(
+           
+                { category }
+          
+        )
+    
+        res.send(product)
+
+    }else{
+        const product = await prodectModel.find({
+            $and: [
+                { subCategory },
+                { category }
+            ]
+        })
+    
+        res.send(product)
+    }
+  
 
 })
 
