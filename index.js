@@ -42,9 +42,9 @@ app.get('/search', async (req, res) => {
 
     const product = await prodectModel.find({
         $or: [
-            { subCategory: q },
-            { category: q },
-            { name: q },
+            { subCategory:{$regex: new RegExp(q, 'i')} },
+            { q: {$regex: new RegExp(q, 'i')} },
+            { name: {$regex: new RegExp(q, 'i')} },
 
         ]
     })
@@ -67,35 +67,39 @@ app.get('/product/category', async (req, res) => {
 
 app.get('/product/subcategory', async (req, res) => {
     const { category, subCategory } = req.query;
-    console.log(category, subCategory);
-
-    if(subCategory=="All product"){
-     const product = await prodectModel.find(
-           
-                { category }
-          
-        )
+   console.log(category, subCategory )
+    try {
+        let product;
     
-        res.send(product)
-
-    }else{
-        const product = await prodectModel.find({
-            $and: [
-                { subCategory },
-                { category }
-            ]
-        })
+        if (category !== '' && subCategory === 'All product') {
+            // Get all products based on category (case-insensitive)
+            product = await prodectModel.find({ category: { $regex: new RegExp(category, 'i') } });
+        } else {
+            // Get products based on specific category and subcategory (case-insensitive)
+            product = await prodectModel.find({
+                category: { $regex: new RegExp(category, 'i')  },
+                subCategory: { $regex:  new RegExp(subCategory, 'i')  }
+            });
+        }
+        
     
-        res.send(product)
+        console.log(product);
+        res.send(product);
+    } catch (error) {
+        console.error('Error fetching product data:', error);
+        res.status(500).send('Server Error');
     }
-  
-
-})
+});
 
 
+app.delete('/del', async (req, res) => {
+    const { id } = req.query;
+ 
+   
+             await prodectModel.findOneAndDelete({_id:id});
+             res.send("send")
 
-
-
+        })
 app.listen(process.env.PORT, () => {
     console.log(`server start ${process.env.PORT}`);
 })
