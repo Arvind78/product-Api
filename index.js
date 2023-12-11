@@ -13,61 +13,71 @@ mongoose.connect(`mongodb+srv://arvind_varma:arvind_varma@cluster0.vn12nqf.mongo
     process.exit(1);
 })
 
-app.post('/product',async(req,res)=>{
+app.post('/product', async (req, res) => {
     console.log(req.body);
     const newProduct = await prodectModel.create({
         ...req.body
     })
-  res.send(newProduct)
+    res.send(newProduct)
 })
 
 
-app.get('/search',async(req,res)=>{
-    const search = req.query;
-    if(!search){
-        const product = await prodectModel.find({})
-        res.send(product)
-    }else{
-      const product = await prodectModel.find({
-            $or:[
-                {subCategory:search},
-                {category:search},
-                {name:search},
-                
-            ]
-        })
-        
-        res.send(product)
-    }
+app.get('/products', async (req, res) => {
+
+
+    const product = await prodectModel.find({})
+
+    res.send(product)
+
 
 
 })
 
+app.get('/search', async (req, res) => {
+    const { q } = req.query;
 
-app.get('/product/category',async(req,res)=>{
-    const search = req.query;
+
+
     const product = await prodectModel.find({
-        $or:[
-            {category:search}
+        $or: [
+            { subCategory: q },
+            { category: q },
+            { name: q },
+
         ]
     })
-    
+
+    res.send(product)
+
+
+
+})
+
+
+app.get('/product/category', async (req, res) => {
+    const category = req.query;
+    // console.log(search);
+    const product = await prodectModel.find(category)
+
     res.send(product)
 })
 
 
-app.get('/product/subcategory',async(req,res)=>{
-    const {category,subCategory} = req.query;
+app.get('/product/subcategory', async (req, res) => {
+    const { category, subCategory } = req.query;
+    console.log(category, subCategory);
     const product = await prodectModel.find({
-        $and:[
-            {subCategory:search},
-            {category:search}
+        $and: [
+            { subCategory },
+            { category }
         ]
     })
-    
+
     res.send(product)
-    
+
 })
+
+
 
 
 
