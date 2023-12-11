@@ -5,6 +5,8 @@ const mongoose = require('mongoose');
 const prodectModel = require("./model/prodectModel");
 const app = express()
 
+
+app.use(cors())
 app.use(express.json())
 mongoose.connect(`mongodb+srv://arvind_varma:arvind_varma@cluster0.vn12nqf.mongodb.net/?retryWrites=true&w=majority`).then(() => {
     console.log(`DATABASE__CONNECTED`);
